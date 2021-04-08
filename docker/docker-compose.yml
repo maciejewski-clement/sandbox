@@ -1,0 +1,15 @@
+version : '3.9'
+
+# Creates a service made of :
+# - 2 containers (flask, nginx)
+# - 1 default network associated to the service 
+
+services :
+    flask :
+        build : ./flask
+        ports :
+            - 5000:5000
+    nginx :
+        build : ./nginx
+        ports : 
+            - 80:80
