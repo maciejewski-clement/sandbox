@@ -1,0 +1,60 @@
+version : '3.9'
+
+# This Dockerfile creates a service made of :
+#   - 1 Python App (Flask / uWSGI) on port 5000
+#   - 1 Web Server / Reverse Proxy (Nginx) listening on port 80 and forwarding on Flask port
+#   - 1 Container Supervision Stack (cAdvisor / Prometheus / Grafana) :
+#       - cAdvisor creates data about docker containers and expose them on port 8080
+#       - Prometheus collects cAdvisor data and expose them on port 9090
+#       - Grafana displays Prometheus data on port 3000
+
+# This service makes these URL available :
+#   - localhost (Flask Website)
+#   - localhost:9090 (Prometheus GUI)
+#   - localhost:3000 (Grafana GUI)
+#   - localhost:8080 (cAdvisor GUI)
+
+services :
+
+    flask :
+        build : ./flask
+        container_name : flask
+        ports :
+            - 5000:5000
+
+    nginx :
+        build : ./nginx
+        container_name : nginx
+        ports : 
+            - 80:80
+
+    prometheus :
+        image : prom/prometheus:v2.26.0
+        container_name : prometheus
+        volumes :
+            - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        ports : 
+            - 9090:9090
+
+    cadvisor :
+        image : gcr.io/cadvisor/cadvisor:v0.39.0
+        container_name : cadvisor
+        user : root
+        volumes :
+            - /:/rootfs:ro
+            - /var/run:/var/run:rw
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+        ports :
+            - 8080:8080
+
+    grafana :
+        image : grafana/grafana:7.5.4
+        container_name : grafana
+        volumes :
+            - grafana-storage:/var/lib/grafana
+        ports :
+            - '3000:3000'
+
+volumes :
+    grafana-storage :
