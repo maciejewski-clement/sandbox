@@ -1,5 +1,7 @@
 apiVersion : 1
 
+# This YAML defines a provisioned Prometheus datasource for Grafana to operate immediatly
+
 deleteDatasources :
 
   - name : Prometheus

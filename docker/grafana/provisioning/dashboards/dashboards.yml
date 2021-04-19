@@ -1,8 +1,16 @@
 apiVersion : 1
 
+# This YAML defines a Provider which informs Grafana :
+#   - Where provisionied dashboards should be
+#   - What are their global properties (editability, type, folder name, etc)
+
+# Two dashboards are provisioned in /etc/grafana/provisioning/dashboards :
+#   - cadvisor.json, to monitor containers
+#   - node-exporter.json, to monitor linux server
+
 providers :
   
-- name : 'Prometheus'
+- name : 'Default'
   orgId : 1
   folder : ''
   type : file
