@@ -3,8 +3,9 @@ version : '3.9'
 # This Dockerfile creates a service made of :
 #   - 1 Python App (Flask / uWSGI) on port 5000
 #   - 1 Web Server / Reverse Proxy (Nginx) listening on port 80 and forwarding on Flask port
-#   - 1 Container Supervision Stack (cAdvisor / Prometheus / Grafana) :
-#       - cAdvisor creates data about docker containers and expose them on port 8080
+#   - 1 Supervision Stack (cAdvisor / Node Exporter / Prometheus / Grafana) :
+#       - cAdvisor creates metrics about docker containers and exposes them on port 8080
+#       - Node Exporter creates metrics about Linux server and exposes them on port 9100
 #       - Prometheus collects cAdvisor data and expose them on port 9090
 #       - Grafana displays Prometheus data on port 3000
 
@@ -13,6 +14,7 @@ version : '3.9'
 #   - localhost:9090 (Prometheus GUI)
 #   - localhost:3000 (Grafana GUI)
 #   - localhost:8080 (cAdvisor GUI)
+#   - localhost:9100 (Node Exporter GUI)
 
 services :
 
@@ -28,14 +30,6 @@ services :
         ports : 
             - 80:80
 
-    prometheus :
-        image : prom/prometheus:v2.26.0
-        container_name : prometheus
-        volumes :
-            - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-        ports : 
-            - 9090:9090
-
     cadvisor :
         image : gcr.io/cadvisor/cadvisor:v0.39.0
         container_name : cadvisor
@@ -48,6 +42,21 @@ services :
         ports :
             - 8080:8080
 
+    node-exporter :
+        image : prom/node-exporter:v1.1.2
+        container_name : node-exporter
+        ports :
+            - 9100:9100
+
+    prometheus :
+        image : prom/prometheus:v2.26.0
+        container_name : prometheus
+        volumes :
+            - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+            - prometheus-storage:/prometheus
+        ports : 
+            - 9090:9090
+
     grafana :
         image : grafana/grafana:7.5.4
         container_name : grafana
@@ -57,4 +66,5 @@ services :
             - '3000:3000'
 
 volumes :
+    prometheus-storage :
     grafana-storage :
