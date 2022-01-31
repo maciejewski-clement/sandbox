@@ -28,33 +28,41 @@ services :
         ports : 
             - 80:80
 
-    prometheus :
-        image : prom/prometheus:v2.26.0
-        container_name : prometheus
-        volumes :
-            - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-        ports : 
-            - 9090:9090
-
-    cadvisor :
-        image : gcr.io/cadvisor/cadvisor:v0.39.0
-        container_name : cadvisor
-        user : root
-        volumes :
-            - /:/rootfs:ro
-            - /var/run:/var/run:rw
-            - /sys:/sys:ro
-            - /var/lib/docker/:/var/lib/docker:ro
+    mariadb :
+        image : mariadb:10.6.0
+        container_name : mariadb
+        environment :
+            MYSQL_ROOT_PASSWORD : root
         ports :
-            - 8080:8080
+            - 3306:3306
 
-    grafana :
-        image : grafana/grafana:7.5.4
-        container_name : grafana
-        volumes :
-            - grafana-storage:/var/lib/grafana
-        ports :
-            - '3000:3000'
-
-volumes :
-    grafana-storage :
+#    prometheus :
+#        image : prom/prometheus:v2.26.0
+#        container_name : prometheus
+#        volumes :
+#            - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#        ports : 
+#            - 9090:9090
+#
+#    cadvisor :
+#        image : gcr.io/cadvisor/cadvisor:v0.39.0
+#        container_name : cadvisor
+#        user : root
+#        volumes :
+#            - /:/rootfs:ro
+#            - /var/run:/var/run:rw
+#            - /sys:/sys:ro
+#            - /var/lib/docker/:/var/lib/docker:ro
+#        ports :
+#            - 8080:8080
+#
+#    grafana :
+#        image : grafana/grafana:7.5.4
+#        container_name : grafana
+#        volumes :
+#            - grafana-storage:/var/lib/grafana
+#        ports :
+#            - '3000:3000'
+#
+#volumes :
+#    grafana-storage :

@@ -11,6 +11,7 @@ ENV FLASK_APP="app.py"
 
 RUN pip3 install \
         flask \
-        uwsgi
+        uwsgi \
+	mariadb
 
 ENTRYPOINT uwsgi --ini uwsgi.ini
